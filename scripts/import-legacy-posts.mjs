@@ -58,6 +58,10 @@ function normalizeMarkdown(markdown) {
       (_, filename) => `![文章示意图](/images/legacy/${filename})`,
     )
     .replaceAll("&#x20;", "")
+    .replace(
+      /\*\*([^*\n]+?)([：:])\s*\*\*(?=\S)/g,
+      (_, label, punctuation) => `**${label.trimEnd()}**${punctuation}`,
+    )
     .trim();
 }
 

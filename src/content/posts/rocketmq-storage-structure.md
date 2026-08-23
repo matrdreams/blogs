@@ -19,12 +19,12 @@ RocketMQ 存储主要是由 Broker 来完成的，本文主要从以下几个方
 
 ## 数据目录结构
 
-* **commitlog：**这个目录下包含具体的数据文件，不区分 topic 以及 queueId，也就是说此 broker 收到的所有消息都会存储在这个目录下。每个文件的文件名由该文件中保存消息的最小物理 offset 在高位补0组成，文件默认大小为1G。
-* **consumequeue：**这是一个索引目录，文件结构为 consumequeue/该broker下所有Topic名称/该Topic下所有队列名/具体的消费队列文件。每个消费队列文件的每条数据其实是commitlog文件的一个索引，包含三个信息：对应消息在 commitlog 文件中的 offset、消息 Tag 的 hashcode、消息长度。
-* **index：**这是一个索引目录，目录下的每个文件其实是按照消息Key构建的存储在磁盘中的HashMap。用来加速按照消息 key 检索消息的场景。
-* **config：**此目录下保存了当前 broker 中的全部 Topic、订阅关系和消费进度。
-* **abort：**此文件保存 Broker 异常关闭的标志。如果 Broker 是正常关闭的，则此文件会被删除。当 Broke 启动时，会根据是否异常关闭来决定是否需要重新构建 Index 索引等操作。
-* **checkpoint：**此文件保存 Broker 最近一次正常运行时的状态，如刷盘时间、构建索引时间等。
+* **commitlog**：这个目录下包含具体的数据文件，不区分 topic 以及 queueId，也就是说此 broker 收到的所有消息都会存储在这个目录下。每个文件的文件名由该文件中保存消息的最小物理 offset 在高位补0组成，文件默认大小为1G。
+* **consumequeue**：这是一个索引目录，文件结构为 consumequeue/该broker下所有Topic名称/该Topic下所有队列名/具体的消费队列文件。每个消费队列文件的每条数据其实是commitlog文件的一个索引，包含三个信息：对应消息在 commitlog 文件中的 offset、消息 Tag 的 hashcode、消息长度。
+* **index**：这是一个索引目录，目录下的每个文件其实是按照消息Key构建的存储在磁盘中的HashMap。用来加速按照消息 key 检索消息的场景。
+* **config**：此目录下保存了当前 broker 中的全部 Topic、订阅关系和消费进度。
+* **abort**：此文件保存 Broker 异常关闭的标志。如果 Broker 是正常关闭的，则此文件会被删除。当 Broke 启动时，会根据是否异常关闭来决定是否需要重新构建 Index 索引等操作。
+* **checkpoint**：此文件保存 Broker 最近一次正常运行时的状态，如刷盘时间、构建索引时间等。
 
 Broker 数据目录结构示意图：
 
@@ -113,9 +113,9 @@ RocketMQ中有两种索引文件，分别是 Consumer Queue 和 Index File
 --------------------------------------------------
 ```
 
-* **物理位点：**占用8字节，消息在CommitLog文件中的物理偏移量
-* **消息体大小：**占用4字节，消息数据总大小，单位为字节
-* **Tag的Hash值：**占用8字节，消息Tag的Hash值
+* **物理位点**：占用8字节，消息在CommitLog文件中的物理偏移量
+* **消息体大小**：占用4字节，消息数据总大小，单位为字节
+* **Tag的Hash值**：占用8字节，消息Tag的Hash值
 
 ### Index File
 
@@ -131,10 +131,10 @@ RocketMQ中有两种索引文件，分别是 Consumer Queue 和 Index File
 
 此部分存储当前索引文件的一些属性信息
 
-* **beginTimestamp、endTimestamp：**该索引文件中第一条消息和最后一条消息在 commitlog 中存储的时间，也就是消息在 Broker 中的实际落盘时间。
-* **beginPhyoffset、endPhyoffset：**该索引文件中第一条消息和最后一条消息在 commitlog 中的物理偏移量。
-* **hashSlotCount：**该索引文件中的 hash slot 的个数。
-* **indexCount：**该索引文件中的索引数据条数。
+* **beginTimestamp、endTimestamp**：该索引文件中第一条消息和最后一条消息在 commitlog 中存储的时间，也就是消息在 Broker 中的实际落盘时间。
+* **beginPhyoffset、endPhyoffset**：该索引文件中第一条消息和最后一条消息在 commitlog 中的物理偏移量。
+* **hashSlotCount**：该索引文件中的 hash slot 的个数。
+* **indexCount**：该索引文件中的索引数据条数。
 
 #### Slot Table
 
@@ -146,10 +146,10 @@ Index File本质上是存储在磁盘中的一个 Hash 索引。这部分位置�
 
 此部分为真正的索引数据，每个索引项存储如下信息：
 
-* **消息 Key 的 Hash 值：**占用4字节，key = topic + “#” + KEY ，然后计算 hash
-* **消息位点：**占用8字节，消息在 commitlog 中的物理偏移量
-* **时间差：**4字节，当前索引对应消息的存储时间与 Index header 部分 beginTimestamp 属性的差值，单位为秒。存储差值应该是为了节省空间。
-* **下一节点偏移量：**占用4字节，因为可能存在 Hash 冲突，所以每个索引项都需要存储下一节点的位置。
+* **消息 Key 的 Hash 值**：占用4字节，key = topic + “#” + KEY ，然后计算 hash
+* **消息位点**：占用8字节，消息在 commitlog 中的物理偏移量
+* **时间差**：4字节，当前索引对应消息的存储时间与 Index header 部分 beginTimestamp 属性的差值，单位为秒。存储差值应该是为了节省空间。
+* **下一节点偏移量**：占用4字节，因为可能存在 Hash 冲突，所以每个索引项都需要存储下一节点的位置。
 
 ### 索引使用方式
 
