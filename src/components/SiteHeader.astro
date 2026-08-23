@@ -1,0 +1,20 @@
+---
+import { SITE } from "../config";
+
+const path = Astro.url.pathname;
+const navItems = [
+  { href: "/", label: "文章", active: path === "/" || path.startsWith("/posts/") || path.startsWith("/archive/") },
+  { href: "/categories/", label: "分类", active: path.startsWith("/categories/") },
+  { href: "/tags/", label: "标签", active: path.startsWith("/tags/") },
+  { href: "/#about", label: "关于", active: false },
+];
+---
+
+<header class="site-header page" id="top">
+  <a class="brand" href="/">{SITE.title}</a>
+  <nav class="site-nav" aria-label="博客导航">
+    {navItems.map((item) => (
+      <a href={item.href} aria-current={item.active ? "page" : undefined}>{item.label}</a>
+    ))}
+  </nav>
+</header>

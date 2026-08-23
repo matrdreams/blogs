@@ -1,0 +1,27 @@
+---
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { countBy, getPublishedPosts, taxonomyHref } from "../../lib/posts";
+
+const posts = await getPublishedPosts();
+const tags = countBy(posts, (post) => post.data.tags);
+---
+
+<BaseLayout title="标签" description="按标签浏览博客文章；一篇文章可以拥有多个标签。">
+  <SiteHeader />
+  <main class="page">
+    <header class="collection-header">
+      <div><p class="eyebrow">浏览文章</p><h1>标签</h1></div>
+      <p>标签可以跨越分类连接文章，一篇文章可以同时出现在多个标签下。</p>
+    </header>
+    <div class="taxonomy-grid">
+      {tags.map(({ name, count }) => (
+        <a class="taxonomy-card" href={taxonomyHref("tags", name)}>
+          <strong>#{name}</strong><span>{count} 篇</span>
+        </a>
+      ))}
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

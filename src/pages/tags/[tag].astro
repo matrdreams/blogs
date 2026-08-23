@@ -1,0 +1,36 @@
+---
+import PostList from "../../components/PostList.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublishedPosts, taxonomySlug, type Post } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag: taxonomySlug(tag) },
+    props: {
+      tag,
+      posts: posts.filter((post) => post.data.tags.includes(tag)),
+    },
+  }));
+}
+
+interface Props { tag: string; posts: Post[] }
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`带有“${tag}”标签的全部文章。`}>
+  <SiteHeader />
+  <main class="page">
+    <header class="collection-header">
+      <div><p class="eyebrow">标签</p><h1>#{tag}</h1></div>
+      <p>共 {posts.length} 篇文章，按照发布时间从新到旧排列。</p>
+    </header>
+    <div class="collection-content">
+      <PostList posts={posts} heading={`#${tag}`} note={`${posts.length} 篇`} />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

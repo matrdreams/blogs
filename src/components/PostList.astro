@@ -1,0 +1,64 @@
+---
+import type { Post } from "../lib/posts";
+import {
+  formatCompactDate,
+  postHref,
+  taxonomyHref,
+} from "../lib/posts";
+
+interface Props {
+  posts: Post[];
+  heading?: string;
+  note?: string;
+  showArchiveLink?: boolean;
+  totalCount?: number;
+}
+
+const {
+  posts,
+  heading = "最近文章",
+  note = "按发布时间倒序",
+  showArchiveLink = false,
+  totalCount = posts.length,
+} = Astro.props;
+---
+
+<section class="posts" aria-labelledby="post-list-title">
+  <header class="section-title">
+    <h2 id="post-list-title">{heading}</h2>
+    <span>{note}</span>
+  </header>
+
+  {posts.length === 0 ? (
+    <p class="empty-state">这里暂时还没有文章。</p>
+  ) : posts.map((post) => {
+    const date = formatCompactDate(post.data.publishedAt);
+    return (
+      <article class="post-row">
+        <time datetime={post.data.publishedAt.toISOString()}>
+          {date.year}<br />{date.monthDay}
+        </time>
+        <div>
+          <p class="post-category">
+            <a href={taxonomyHref("categories", post.data.category)}>{post.data.category}</a>
+          </p>
+          <h3><a href={postHref(post)}>{post.data.title}</a></h3>
+          <p class="post-summary">{post.data.description}</p>
+          <div class="post-meta">
+            {post.data.tags.map((tag) => (
+              <a href={taxonomyHref("tags", tag)}>#{tag}</a>
+            ))}
+            {post.data.readingMinutes && <span>{post.data.readingMinutes} 分钟</span>}
+          </div>
+        </div>
+      </article>
+    );
+  })}
+
+  {showArchiveLink && (
+    <div class="more-row">
+      <span>共 {totalCount} 篇文章</span>
+      <a href="/archive/">查看全部归档 →</a>
+    </div>
+  )}
+</section>

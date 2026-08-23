@@ -1,0 +1,40 @@
+---
+import ActivityHeatmap from "../components/ActivityHeatmap.astro";
+import PostList from "../components/PostList.astro";
+import Sidebar from "../components/Sidebar.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { SITE } from "../config";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPublishedPosts } from "../lib/posts";
+
+const posts = await getPublishedPosts();
+const recentPosts = posts.slice(0, 8);
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main class="page">
+    <section class="intro" id="about">
+      <div>
+        <p class="kicker">个人博客 · 缓慢更新</p>
+        <h1>写一些值得留下的事。</h1>
+      </div>
+      <div class="intro-copy">
+        <p>{SITE.intro}</p>
+        <div class="contact">
+          <span>{SITE.location} · {SITE.since}</span>
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </div>
+      </div>
+    </section>
+
+    <ActivityHeatmap posts={posts} />
+
+    <div class="content-layout">
+      <PostList posts={recentPosts} totalCount={posts.length} showArchiveLink />
+      <Sidebar posts={posts} />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

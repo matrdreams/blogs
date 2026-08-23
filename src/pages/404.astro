@@ -1,0 +1,16 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="页面没有找到" noindex>
+  <SiteHeader />
+  <main class="page not-found">
+    <strong>404</strong>
+    <h1>这里没有你要找的页面。</h1>
+    <p>它可能被移动了，也可能从未存在过。</p>
+    <a href="/">回到首页 →</a>
+  </main>
+  <SiteFooter />
+</BaseLayout>

@@ -1,0 +1,87 @@
+---
+import type { Post } from "../lib/posts";
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+
+const keyFor = (date: Date) => [
+  date.getUTCFullYear(),
+  String(date.getUTCMonth() + 1).padStart(2, "0"),
+  String(date.getUTCDate()).padStart(2, "0"),
+].join("-");
+
+const today = new Date();
+const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+const end = new Date(todayUtc);
+end.setUTCDate(end.getUTCDate() + ((7 - end.getUTCDay()) % 7));
+const start = new Date(end);
+start.setUTCDate(start.getUTCDate() - 363);
+
+const counts = new Map<string, number>();
+for (const post of posts) {
+  const postDates = new Set([
+    keyFor(post.data.publishedAt),
+    ...(post.data.updatedAt ? [keyFor(post.data.updatedAt)] : []),
+  ]);
+  for (const key of postDates) counts.set(key, (counts.get(key) ?? 0) + 1);
+}
+
+const days = Array.from({ length: 364 }, (_, index) => {
+  const date = new Date(start);
+  date.setUTCDate(start.getUTCDate() + index);
+  const key = keyFor(date);
+  const count = counts.get(key) ?? 0;
+  return {
+    date,
+    key,
+    count,
+    level: Math.min(count, 4),
+    future: date.getTime() > todayUtc.getTime(),
+  };
+});
+
+const weeks = Array.from({ length: 52 }, (_, index) => days.slice(index * 7, index * 7 + 7));
+const activityCount = posts.filter(({ data }) => {
+  const time = data.publishedAt.getTime();
+  return time >= start.getTime() && time <= todayUtc.getTime();
+}).length;
+const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+const monthLabels = weeks.map((week, index) => {
+  const month = week[3].date.getUTCMonth();
+  const previousMonth = index > 0 ? weeks[index - 1][3].date.getUTCMonth() : -1;
+  return index === 0 || month !== previousMonth ? monthNames[month] : "";
+});
+const dateLabel = new Intl.DateTimeFormat("zh-CN", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+---
+
+<section class="activity" aria-labelledby="activity-title">
+  <header class="activity-header">
+    <h2 id="activity-title">更新记录</h2>
+    <p>过去 12 个月发布 {activityCount} 篇文章。颜色越深，表示当天留下的内容越多。</p>
+  </header>
+  <div class="activity-map" tabindex="0" aria-label="过去十二个月的文章更新热力图，可横向滚动查看">
+    <div class="heatmap">
+      <div class="weeks" aria-label="每日更新数量">
+        {weeks.map((week) => (
+          <span class="week">
+            {week.map((day) => (
+              <time
+                datetime={day.key}
+                class:list={[`level-${day.level}`, { future: day.future }]}
+                title={`${dateLabel.format(day.date)}：${day.count ? `${day.count} 篇更新` : "无更新"}`}
+                aria-label={`${dateLabel.format(day.date)}，${day.count ? `${day.count} 篇更新` : "无更新"}`}
+              />
+            ))}
+          </span>
+        ))}
+      </div>
+      <div class="months" aria-hidden="true">
+        {monthLabels.map((label) => <span>{label}</span>)}
+      </div>
+      <div class="activity-foot">
+        <span>{keyFor(start).slice(0, 7)} — {keyFor(end).slice(0, 7)}</span>
+        <span class="legend">少 <i></i><i></i><i></i> 多</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+---
+import { SITE } from "../config";
+---
+
+<footer class="site-footer page">
+  <span>© {new Date().getFullYear()} {SITE.title}</span>
+  <nav aria-label="页脚导航">
+    <a href="/archive/">归档</a>
+    <a href={`mailto:${SITE.email}`}>Email</a>
+    <a href="#top">回到顶部 ↑</a>
+  </nav>
+</footer>

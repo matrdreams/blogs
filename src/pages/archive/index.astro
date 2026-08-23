@@ -1,0 +1,23 @@
+---
+import PostList from "../../components/PostList.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublishedPosts } from "../../lib/posts";
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="文章归档" description={`按时间浏览全部 ${posts.length} 篇文章。`}>
+  <SiteHeader />
+  <main class="page">
+    <header class="collection-header">
+      <div><p class="eyebrow">全部文章</p><h1>文章归档</h1></div>
+      <p>这里保存所有已经发布的文章，并按照发布时间从新到旧排列。</p>
+    </header>
+    <div class="collection-content">
+      <PostList posts={posts} heading="全部文章" note={`${posts.length} 篇`} />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
