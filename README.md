@@ -1,6 +1,6 @@
 # Kun 的博客
 
-一个面向 Cloudflare Pages 的静态个人博客。文章保存在 GitHub 仓库的 Markdown 文件中；每次推送后，Cloudflare Pages 会重新构建站点，首页、文章页、分类、标签和更新热力图都会自动更新。
+一个面向 Cloudflare Pages 的静态个人博客。文章保存在 GitHub 仓库的 Markdown 文件中；每次推送后，Cloudflare Pages 会重新构建站点，首页、文章页、分类、标签和每周更新记录都会自动更新。
 
 生产站点使用 `https://matrdreams.com`。站点 canonical 和 Open Graph 地址均在构建时固定到该域名。
 
@@ -51,7 +51,7 @@ draft: false
 - `draft: false` 的文章会自动按 `publishedAt` 倒序出现在首页和归档。
 - 一篇文章可以拥有多个 `tags`，构建时会自动生成对应的标签页面。
 - `category` 会自动加入分类页。
-- `publishedAt` 与 `updatedAt` 会自动计入首页更新热力图。
+- `publishedAt` 与 `updatedAt` 会自动聚合到首页过去 52 周的更新记录；同一篇文章在同一周只计一次。
 
 完成文章后提交并推送：
 
