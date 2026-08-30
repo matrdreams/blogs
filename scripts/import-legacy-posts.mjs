@@ -16,7 +16,6 @@ const posts = [
     description: "从 Namespace、Cgroups 与镜像分层出发，理解 Linux 容器为什么本质上是一个受隔离和限制的进程。",
     publishedAt: "2022-09-12",
     tags: ["容器", "Linux", "Docker"],
-    readingMinutes: 18,
   },
   {
     source: "mq/rocketmq-store.md",
@@ -25,7 +24,6 @@ const posts = [
     description: "梳理 RocketMQ Broker 的 CommitLog、ConsumeQueue 与 Index File，以及刷盘、索引和查询机制。",
     publishedAt: "2022-08-04",
     tags: ["RocketMQ", "消息队列", "存储"],
-    readingMinutes: 10,
   },
 ];
 
@@ -73,7 +71,6 @@ function frontmatter(post) {
     `publishedAt: ${post.publishedAt}`,
     'category: "技术现场"',
     `tags: ${JSON.stringify(post.tags)}`,
-    `readingMinutes: ${post.readingMinutes}`,
     "draft: false",
     "---",
     "",

@@ -4,7 +4,6 @@ description: "梳理 RocketMQ Broker 的 CommitLog、ConsumeQueue 与 Index File
 publishedAt: 2022-08-04
 category: "技术现场"
 tags: ["RocketMQ","消息队列","存储"]
-readingMinutes: 10
 draft: false
 ---
 ## 概述

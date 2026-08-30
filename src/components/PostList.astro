@@ -48,7 +48,6 @@ const {
             {post.data.tags.map((tag) => (
               <a href={taxonomyHref("tags", tag)}>#{tag}</a>
             ))}
-            {post.data.readingMinutes && <span>{post.data.readingMinutes} 分钟</span>}
           </div>
         </div>
       </article>

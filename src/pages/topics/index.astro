@@ -1,0 +1,51 @@
+---
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { countBy, getPublishedPosts, taxonomyHref } from "../../lib/posts";
+
+const posts = await getPublishedPosts();
+const categories = countBy(posts, (post) => [post.data.category]);
+const tags = countBy(posts, (post) => post.data.tags);
+---
+
+<BaseLayout title="主题" description="按主要分类和关键词浏览博客文章。">
+  <SiteHeader />
+  <main class="page">
+    <header class="collection-header">
+      <div><p class="eyebrow">浏览文章</p><h1>主题</h1></div>
+      <p>主要分类提供完整脉络，关键词帮助跨分类找到相互关联的文章。</p>
+    </header>
+
+    <div class="topics-directory">
+      <section aria-labelledby="topic-categories-title">
+        <header class="section-title">
+          <h2 id="topic-categories-title">主要分类</h2>
+          <span>{categories.length} 个</span>
+        </header>
+        <div class="taxonomy-grid topic-taxonomy-grid">
+          {categories.map(({ name, count }) => (
+            <a class="taxonomy-card" href={taxonomyHref("categories", name)}>
+              <strong>{name}</strong><span>{count} 篇</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="topic-tags-title">
+        <header class="section-title">
+          <h2 id="topic-tags-title">关键词</h2>
+          <span>{tags.length} 个</span>
+        </header>
+        <div class="taxonomy-grid topic-taxonomy-grid">
+          {tags.map(({ name, count }) => (
+            <a class="taxonomy-card" href={taxonomyHref("tags", name)}>
+              <strong>#{name}</strong><span>{count} 篇</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

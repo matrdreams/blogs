@@ -1,0 +1,87 @@
+---
+import type { Post } from "../lib/posts";
+import {
+  countBy,
+  formatCompactDate,
+  postHref,
+  taxonomyHref,
+} from "../lib/posts";
+
+interface Props {
+  posts: Post[];
+  allPosts: Post[];
+}
+
+const { posts, allPosts } = Astro.props;
+const categories = countBy(allPosts, (post) => [post.data.category]);
+const tags = countBy(allPosts, (post) => post.data.tags);
+const topics = [
+  ...categories.map(({ name, count }) => ({
+    name,
+    count,
+    href: taxonomyHref("categories", name),
+  })),
+  ...tags
+    .filter(({ name }) => !categories.some((category) => category.name === name))
+    .map(({ name, count }) => ({
+      name,
+      count,
+      href: taxonomyHref("tags", name),
+  })),
+].slice(0, 8);
+const maxTopicCount = Math.max(1, ...topics.map(({ count }) => count));
+const topicWeight = (count: number) => Math.max(1, Math.ceil((count / maxTopicCount) * 3));
+---
+
+<section class="home-highlights" aria-labelledby="recent-posts-title">
+  <header class="home-highlights-header">
+    <h2 id="recent-posts-title">最近文章</h2>
+    <div class="home-highlights-meta">
+      <span>共 {allPosts.length} 篇</span>
+      <a href="/archive/">全部归档 →</a>
+    </div>
+  </header>
+
+  <div class="highlight-list">
+    {posts.map((post) => {
+      const date = formatCompactDate(post.data.publishedAt);
+      return (
+        <article class="post-row">
+          <time datetime={post.data.publishedAt.toISOString()}>
+            {date.year}<br />{date.monthDay}
+          </time>
+          <div>
+            <p class="post-category">
+              <a href={taxonomyHref("categories", post.data.category)}>{post.data.category}</a>
+            </p>
+            <h3><a href={postHref(post)}>{post.data.title}</a></h3>
+            <p class="post-summary">{post.data.description}</p>
+            <div class="post-meta">
+              {post.data.tags.map((tag) => (
+                <a href={taxonomyHref("tags", tag)}>#{tag}</a>
+              ))}
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+  <footer class="home-topics">
+    <strong class="home-topics-label">当前关注</strong>
+    <div class="home-topic-cloud" aria-label="当前关注的主题">
+      {topics.map((topic) => (
+        <a
+          class={`topic-cloud-item weight-${topicWeight(topic.count)}`}
+          href={topic.href}
+          aria-label={`${topic.name}，${topic.count} 篇文章`}
+        >
+          {topic.name}<sup>{topic.count}</sup>
+        </a>
+      ))}
+    </div>
+    <div class="home-directory-links">
+      <a href="/topics/">全部主题 →</a>
+    </div>
+  </footer>
+</section>

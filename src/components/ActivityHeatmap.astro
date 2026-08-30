@@ -108,11 +108,6 @@ for (const month of monthGroups) {
   }
 }
 
-const publishedCount = posts.filter(({ data }) => {
-  const date = utcDay(data.publishedAt);
-  return date >= start && date <= todayUtc;
-}).length;
-const activeWeekCount = weeks.filter(({ count }) => count > 0).length;
 const selectedWeekIndex = weeks.reduce(
   (selectedIndex, week, index) => week.count >= weeks[selectedIndex].count ? index : selectedIndex,
   0,
@@ -124,10 +119,12 @@ const periodLabel = `${compactDate(start).slice(0, 7)} — ${compactDate(end).sl
 <section class="activity" aria-labelledby="activity-title" data-weekly-activity>
   <header class="activity-header">
     <h2 id="activity-title">更新记录</h2>
-    <p>过去 52 周发布 {publishedCount} 篇文章，活跃于 {activeWeekCount} 周。每格代表一周，颜色越深，表示该周更新越多。</p>
   </header>
 
-  <div class="activity-map" aria-label="过去 52 周的文章更新记录">
+  <div
+    class="activity-map"
+    aria-label="过去 52 周的文章更新记录"
+  >
     <div
       class="activity-years"
       style={`--activity-month-count: ${monthGroups.length};`}
@@ -179,23 +176,4 @@ const periodLabel = `${compactDate(start).slice(0, 7)} — ${compactDate(end).sl
   </div>
 </section>
 
-<script>
-  const activity = document.querySelector<HTMLElement>("[data-weekly-activity]");
-
-  if (activity) {
-    const detail = activity.querySelector<HTMLElement>("[data-week-detail]");
-    const cells = activity.querySelectorAll<HTMLButtonElement>("[data-week-cell]");
-
-    const selectWeek = (selectedCell: HTMLButtonElement) => {
-      for (const cell of cells) cell.setAttribute("aria-pressed", "false");
-      selectedCell.setAttribute("aria-pressed", "true");
-      if (detail) detail.textContent = selectedCell.dataset.detail ?? "";
-    };
-
-    for (const cell of cells) {
-      cell.addEventListener("mouseenter", () => selectWeek(cell));
-      cell.addEventListener("focus", () => selectWeek(cell));
-      cell.addEventListener("click", () => selectWeek(cell));
-    }
-  }
-</script>
+<script is:inline src="/scripts/activity-heatmap.js" defer></script>

@@ -1,0 +1,41 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+  variant: "desktop" | "mobile";
+}
+
+const { headings, variant } = Astro.props;
+---
+
+{variant === "desktop" ? (
+  <aside class="article-toc article-toc-desktop">
+    <nav aria-label="文章目录">
+      <p>文章目录</p>
+      <ol>
+        {headings.map((heading) => (
+          <li class={`depth-${heading.depth}`}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </aside>
+) : (
+  <details class="article-toc article-toc-mobile">
+    <summary>
+      <span>文章目录</span>
+      <span class="article-toc-chevron" aria-hidden="true">⌄</span>
+    </summary>
+    <nav aria-label="文章目录">
+      <ol>
+        {headings.map((heading) => (
+          <li class={`depth-${heading.depth}`}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </details>
+)}

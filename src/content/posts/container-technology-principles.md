@@ -4,7 +4,6 @@ description: "从 Namespace、Cgroups 与镜像分层出发，理解 Linux 容�
 publishedAt: 2022-09-12
 category: "技术现场"
 tags: ["容器","Linux","Docker"]
-readingMinutes: 18
 draft: false
 ---
 > **注意**

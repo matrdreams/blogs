@@ -4,8 +4,7 @@ import { SITE } from "../config";
 const path = Astro.url.pathname;
 const navItems = [
   { href: "/", label: "文章", active: path === "/" || path.startsWith("/posts/") || path.startsWith("/archive/") },
-  { href: "/categories/", label: "分类", active: path.startsWith("/categories/") },
-  { href: "/tags/", label: "标签", active: path.startsWith("/tags/") },
+  { href: "/topics/", label: "主题", active: path.startsWith("/topics/") || path.startsWith("/categories/") || path.startsWith("/tags/") },
   { href: "/#about", label: "关于", active: false },
 ];
 ---

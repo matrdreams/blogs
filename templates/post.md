@@ -4,7 +4,6 @@ description: "用一两句话概括文章，它会显示在首页和分享摘要
 publishedAt: 2026-08-23
 category: "产品与设计"
 tags: ["产品", "思考"]
-readingMinutes: 8
 draft: true
 ---
 

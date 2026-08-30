@@ -39,7 +39,6 @@ description: "请填写文章摘要"
 publishedAt: ${today}
 category: "未分类"
 tags: ["随笔"]
-readingMinutes: 5
 draft: true
 ---
 

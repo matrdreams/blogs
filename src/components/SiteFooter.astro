@@ -1,12 +1,17 @@
 ---
 import { SITE } from "../config";
+
+interface Props { showEmail?: boolean }
+const { showEmail = false } = Astro.props;
 ---
 
-<footer class="site-footer page">
+<footer class:list={["site-footer", "page", showEmail && "has-email"]}>
   <span>© {new Date().getFullYear()} {SITE.title}</span>
+  {showEmail && (
+    <a class="site-footer-email" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+  )}
   <nav aria-label="页脚导航">
-    <a href="/archive/">归档</a>
-    <a href={`mailto:${SITE.email}`}>Email</a>
+    <a href="/topics/">主题</a>
     <a href="#top">回到顶部 ↑</a>
   </nav>
 </footer>
