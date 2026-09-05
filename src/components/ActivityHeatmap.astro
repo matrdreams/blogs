@@ -118,7 +118,10 @@ const periodLabel = `${compactDate(start).slice(0, 7)} — ${compactDate(end).sl
 
 <section class="activity" aria-labelledby="activity-title" data-weekly-activity>
   <header class="activity-header">
-    <h2 id="activity-title">更新记录</h2>
+    <div>
+      <p class="activity-eyebrow">THE WRITING LOG</p>
+      <h2 id="activity-title">更新记录</h2>
+    </div>
   </header>
 
   <div
@@ -139,7 +142,7 @@ const periodLabel = `${compactDate(start).slice(0, 7)} — ${compactDate(end).sl
       class="activity-months"
       style={`--activity-month-count: ${monthGroups.length};`}
     >
-      {monthGroups.map((month) => (
+      {monthGroups.map((month, index) => (
         <div class="activity-month" aria-label={`${month.year}年${month.label}`}>
           <div class="activity-week-cells">
             {month.weeks.map((week) => (
@@ -154,7 +157,9 @@ const periodLabel = `${compactDate(start).slice(0, 7)} — ${compactDate(end).sl
               />
             ))}
           </div>
-          <span class="activity-month-label" aria-hidden="true">{month.label}</span>
+          <span class="activity-month-label" aria-hidden="true">
+            {(index === 0 || month.year !== monthGroups[index - 1].year) && <span class="activity-month-year">{month.year} · </span>}{month.label}
+          </span>
         </div>
       ))}
     </div>

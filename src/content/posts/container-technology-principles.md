@@ -53,7 +53,7 @@ Linux下容器的实现主要依赖于 Namespace 和 Cgroups 技术，Namespace 
 
 Namespace 的创建需要使用 `clone` 系统函数，此函数的定义如下：
 
-```
+```c
 int clone (int (*__fn) (void *__arg), void *__child_stack, int __flags, void *__arg, ...)
 ```
 
@@ -61,7 +61,7 @@ clone 是 linux 下创建进程的系统函数之一，它会创建一个新的�
 
 如果在创建子进程的时候 flags 参数指定了上面表格中的 `CLONE_NEW*` 等常量，那么 linux 就会为此进程创建对应的 Namespace。如以下代码：
 
-```
+```c
 #include <stdio.h>
 #include <sched.h>
 #include <signal.h>
@@ -108,7 +108,7 @@ output:
 
 除了在创建子进程时创建 Namespace，有些时候我们可能需要将一个进程加入已经存在的 Namespace。此时我们需要 `setns`这个系统调用函数。
 
-```
+```c
 int setns (int __fd, int __nstype)
 ```
 

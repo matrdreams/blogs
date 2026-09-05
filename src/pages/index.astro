@@ -1,22 +1,32 @@
 ---
 import ActivityHeatmap from "../components/ActivityHeatmap.astro";
 import HomeHighlights from "../components/HomeHighlights.astro";
+import JournalArtwork from "../components/JournalArtwork.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPublishedPosts } from "../lib/posts";
+import "../styles/home.css";
 
 const posts = await getPublishedPosts();
 const recentPosts = posts.slice(0, 8);
+const firstYear = posts.at(-1)?.data.publishedAt.getUTCFullYear();
 ---
 
-<BaseLayout>
+<BaseLayout bodyClass="home-page">
+  <a class="skip-link" href="#writing">跳到文章</a>
   <SiteHeader />
   <main class="page">
-    <section class="intro" id="about">
-      <div>
-        <p class="kicker">个人博客 · 缓慢更新</p>
-        <h1>写一些值得留下的事。</h1>
+    <section class="journal-intro" aria-labelledby="intro-title">
+      <div class="journal-intro-copy">
+        <h1 id="intro-title">写一些<br />值得留下的事<span class="intro-period">。</span></h1>
+        <p class="journal-intro-description">在技术与日常之间，<br class="mobile-break" />把经历变成理解，把思考留在这里。</p>
+        <a class="journal-start" href="#writing">翻开手记 <span aria-hidden="true">↓</span></a>
+      </div>
+      <JournalArtwork />
+      <div class="journal-intro-foot" aria-hidden="true">
+        <span>技术 / 思考 / 日常</span>
+        <span>{firstYear ? `始于 ${firstYear} · 持续书写` : "保持好奇 · 持续书写"}</span>
       </div>
     </section>
 

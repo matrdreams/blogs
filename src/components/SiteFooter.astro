@@ -6,7 +6,7 @@ const { showEmail = false } = Astro.props;
 ---
 
 <footer class:list={["site-footer", "page", showEmail && "has-email"]}>
-  <span>© {new Date().getFullYear()} {SITE.title}</span>
+  <span>物质的梦</span>
   {showEmail && (
     <a class="site-footer-email" href={`mailto:${SITE.email}`}>{SITE.email}</a>
   )}

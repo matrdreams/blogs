@@ -1,0 +1,38 @@
+---
+// A small, deterministic vector drawing: a thought growing outward like tree rings.
+const rings = Array.from({ length: 23 }, (_, index) => {
+  const scale = 0.12 + index * 0.038;
+  const points = Array.from({ length: 20 }, (_, step) => {
+    const angle = (step / 20) * Math.PI * 2;
+    const contour = 1 + 0.07 * Math.sin(angle * 3 + scale * 3) + 0.045 * Math.cos(angle * 5 - scale * 4);
+    const x = 200 + Math.cos(angle) * 145 * scale * contour + Math.sin(scale * 3) * 9;
+    const y = 163 + Math.sin(angle) * 125 * scale * contour;
+    return { x, y };
+  });
+  const point = (index: number) => points[(index + points.length) % points.length];
+  const pair = (x: number, y: number) => `${x.toFixed(1)},${y.toFixed(1)}`;
+  const curves = points.map((current, index) => {
+    const previous = point(index - 1);
+    const next = point(index + 1);
+    const after = point(index + 2);
+    return `C${pair(current.x + (next.x - previous.x) / 6, current.y + (next.y - previous.y) / 6)} ${pair(next.x - (after.x - current.x) / 6, next.y - (after.y - current.y) / 6)} ${pair(next.x, next.y)}`;
+  });
+  return `M${pair(points[0].x, points[0].y)} ${curves.join(" ")} Z`;
+});
+---
+
+<figure class="journal-artwork" aria-hidden="true">
+  <svg viewBox="0 0 400 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="artwork-guide" d="M24 163H376M200 22V304" stroke-dasharray="2 6" />
+    <g class="artwork-rings">
+      {rings.map((path) => <path d={path} />)}
+    </g>
+    <circle class="artwork-seed" cx="206" cy="161" r="10" />
+    <circle class="artwork-orbit" cx="308" cy="91" r="5" />
+    <path class="artwork-corner" d="M27 42v12m-6-6h12M369 278v12m-6-6h12" />
+    <path class="artwork-guide" d="M276 265h63v33" />
+    <text x="31" y="315" class="artwork-label">A THOUGHT, TAKING SHAPE</text>
+    <text x="342" y="315" class="artwork-label">001</text>
+  </svg>
+  <figcaption>思考的年轮</figcaption>
+</figure>

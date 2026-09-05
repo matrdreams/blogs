@@ -29,14 +29,14 @@
     const copyButton = document.createElement("button");
     copyButton.className = "heading-copy-button";
     copyButton.type = "button";
-    copyButton.textContent = "复制链接";
+    copyButton.textContent = "复制";
     copyButton.setAttribute("aria-label", `复制“${heading.textContent?.trim() ?? "本节"}”的链接`);
     copyButton.addEventListener("click", async () => {
       const url = new URL(window.location.href);
       url.hash = heading.id;
       try {
         await copyText(url.href);
-        showCopiedState(copyButton, "已复制", "复制链接");
+        showCopiedState(copyButton, "已复制", "复制");
       } catch {
         copyButton.textContent = "复制失败";
       }
@@ -51,6 +51,14 @@
     wrapper.className = "code-block";
     pre.before(wrapper);
     wrapper.append(pre);
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "code-block-toolbar";
+    const language = document.createElement("span");
+    language.className = "code-language";
+    const sourceLanguage = pre.dataset.language ?? "text";
+    language.textContent = sourceLanguage === "plaintext" ? "TEXT" : sourceLanguage.toUpperCase();
+    pre.setAttribute("aria-label", `${language.textContent} 代码块，可横向滚动`);
 
     const button = document.createElement("button");
     button.className = "code-copy-button";
@@ -67,6 +75,33 @@
       }
     });
 
-    wrapper.prepend(button);
+    toolbar.append(language, button);
+    wrapper.prepend(toolbar);
+  }
+
+  for (const table of article.querySelectorAll("table")) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "table-scroll";
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute("role", "region");
+    wrapper.setAttribute("aria-label", table.caption?.textContent?.trim() || "文章表格，可横向滚动");
+    table.before(wrapper);
+    wrapper.append(table);
+  }
+
+  const headings = [...article.querySelectorAll("h2[id], h3[id]")];
+  const tocLinks = [...document.querySelectorAll(".article-toc a")];
+  const updateCurrentSection = () => {
+    const current = headings.filter((heading) => heading.getBoundingClientRect().top <= window.innerHeight * 0.3).at(-1) ?? headings[0];
+    for (const link of tocLinks) {
+      if (current && link.getAttribute("href") === `#${current.id}`) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    }
+  };
+  if (headings.length && tocLinks.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(updateCurrentSection, { rootMargin: "0px 0px -70% 0px" });
+    headings.forEach((heading) => observer.observe(heading));
+    updateCurrentSection();
+    window.addEventListener("hashchange", updateCurrentSection);
   }
 })();
